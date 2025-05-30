@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:  
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE  # 실제 URL로 조정
+    username: agent8
+    password: 1234
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: none    # 또는 update / create 등 (개발 상황에 맞게 조정)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+    show-sql: true
+    open-in-view: false
+
+jwt:
+  secret: JH6hYk9xLzY5VmNpXStRb1pxRm1RNmhNV2NqY1NCSkk=
