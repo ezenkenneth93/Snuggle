@@ -3,10 +3,14 @@ package com.snuggle.homework.domain.dto;
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserResponse {
     private Long userId;
     private String name;
@@ -14,4 +18,4 @@ public class UserResponse {
     private Integer englishLevel;
     private LocalDate joinDate;
     private LocalDate expirationDate;
-}
+} 
