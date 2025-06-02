@@ -18,3 +18,9 @@ spring:
 
 jwt:
   secret: JH6hYk9xLzY5VmNpXStRb1pxRm1RNmhNV2NqY1NCSkk=
+
+logging:
+  level:
+    com.snuggle.homework.controller: DEBUG
+    com.snuggle.homework.jwt: DEBUG
+    org.springframework.security: INFO
