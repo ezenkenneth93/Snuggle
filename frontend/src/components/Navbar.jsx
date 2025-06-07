@@ -37,6 +37,7 @@ export default function Navbar({ isLoggedIn }) {
         {isLoggedIn ? (
           <>
             <div className="flex items-center space-x-4">
+              <Link to="/submit" className="hover:text-green-500">숙제제출</Link>
               <Link to="/mypage" className="hover:text-green-500">마이페이지</Link>
               <Link to="/logout" className="hover:text-red-500">로그아웃</Link>
             </div>            

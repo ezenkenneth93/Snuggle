@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HomeworkRequest {
-    private String userAnswer;       // 사용자가 제출한 답변
+    private String userHomework;    // 기존: homeworkContent
+    private String userQuestion;    // 기존: userAnswer
 }

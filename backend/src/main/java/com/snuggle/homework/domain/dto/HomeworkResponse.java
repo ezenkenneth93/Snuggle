@@ -9,8 +9,11 @@ import java.time.LocalDateTime;
 @Builder
 public class HomeworkResponse {
     private Long id;
-    private String userAnswer;
-    private String feedback;
-    private String suggestedAnswer;
+    private Long userId;
     private LocalDateTime submittedAt;
+    
+    private String userHomework;    // 기존: homeworkContent
+    private String userQuestion;    // 기존: userAnswer
+    private String aiFeedback;      // 기존: feedback
+    private String aiAnswer;        // 기존: suggestedAnswer
 }
