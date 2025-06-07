@@ -30,7 +30,8 @@ public class HomeworkService {
 
         Homework homework = Homework.builder()
                 .user(user)
-                .userAnswer(dto.getUserAnswer())
+                .userHomework(dto.getUserHomework())
+                .userQuestion(dto.getUserQuestion())
                 .build();
 
         Homework saved = homeworkRepository.save(homework);
@@ -68,22 +69,28 @@ public class HomeworkService {
         LocalDateTime end = start.plusDays(1);       // 다음 날 00:00:00 (exclusive)
 
 
-        Homework hw = homeworkRepository
-                .findByUserUserIdAndSubmittedAtBetween(user.getUserId(), start, end)
-                .orElseThrow(() -> new IllegalArgumentException("해당 날짜의 숙제가 없습니다."));
+        List<Homework> list = homeworkRepository
+        .findByUserUserIdAndSubmittedAtBetween(user.getUserId(), start, end);
 
-        return toResponse(hw);
-    }
-
-        // 내부 변환 메서드: Entity → DTO
-        private HomeworkResponse toResponse(Homework hw) {
-                return HomeworkResponse.builder()
-                        .id(hw.getId())
-                        .userAnswer(hw.getUserAnswer())
-                        .feedback(hw.getFeedback())
-                        .suggestedAnswer(hw.getSuggestedAnswer())
-                        .submittedAt(hw.getSubmittedAt())
-                        .build();
+        if (list.isEmpty()) {
+            return null; // 또는 빈 DTO, 또는 "숙제 없음" 메시지 포함한 Response
         }
+
+        Homework hw = list.get(0); // 첫 번째 숙제만 사용
+
+            return toResponse(hw);
+        }
+
+    // 내부 변환 메서드: Entity → DTO
+    private HomeworkResponse toResponse(Homework hw) {
+        return HomeworkResponse.builder()
+            .id(hw.getId())
+            .userHomework(hw.getUserHomework())
+            .userQuestion(hw.getUserQuestion())
+            .aiFeedback(hw.getAiFeedback())
+            .aiAnswer(hw.getAiAnswer())
+            .submittedAt(hw.getSubmittedAt())
+            .build();
+    }
 
 }

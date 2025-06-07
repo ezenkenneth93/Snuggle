@@ -25,16 +25,20 @@ public class Homework {
     private LocalDateTime submittedAt;
 
     @Lob
-    @Column(name = "user_answer")
-    private String userAnswer;
+    @Column(name = "user_homework")
+    private String userHomework;
 
     @Lob
-    private String feedback;
+    @Column(name = "user_question")
+    private String userQuestion;
 
     @Lob
-    @Column(name = "suggested_answer")
-    private String suggestedAnswer;
+    @Column(name = "ai_feedback")
+    private String aiFeedback;
 
+    @Lob
+    @Column(name = "ai_answer")
+    private String aiAnswer;
     // insert 직전에 자동으로 호출된다. 현재 시각으로 채워져 저장된다.
     @PrePersist
     public void onCreate() {

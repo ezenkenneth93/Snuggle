@@ -29,8 +29,8 @@ export default function HomePage() {
 
       {/* 텍스트 아래 영역 */}
       <div className="bg-yellow-100 py-16 text-center">
-        <h1 className="text-5xl font-bold text-green-700">숙제 했니?</h1>
-        <p className="mt-4 text-lg text-gray-600">선생님 좀 보여줄래?</p>
+        <h1 className="text-5xl font-bold text-green-700">Snuggle HomeWork</h1>
+        <p className="mt-4 text-lg text-gray-600">Snuggle 숙제 제출 페이지입니다^^</p>
       </div>
 
       {/* 아래 더미 콘텐츠로 스크롤 생성 */}

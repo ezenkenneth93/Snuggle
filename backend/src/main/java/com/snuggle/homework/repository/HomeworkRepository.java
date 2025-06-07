@@ -18,5 +18,5 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     Optional<Homework> findByIdAndUser_UserId(Long id, Long userId);
 
     // UserId와 날짜로 숙제 상세 조회
-    Optional<Homework> findByUserUserIdAndSubmittedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Homework> findByUserUserIdAndSubmittedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
 }

@@ -59,7 +59,7 @@ public class HomeworkController {
             try {
                 date = LocalDate.parse(trimmed); // ISO 형식 파싱 (예: 2025-06-06)
             } catch (DateTimeParseException e) {
-                throw new IllegalArgumentException("잘못된 날짜 형식입니다. yyyy-MM-dd 형식으로 입력해주세요.");
+                throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다. 예: 2025-06-07 형식으로 입력하세요.");
             }
 
             
