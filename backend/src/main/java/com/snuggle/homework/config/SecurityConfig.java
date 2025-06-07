@@ -36,9 +36,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (JWT는 상태 없음)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/login").permitAll() // 로그인 API는 허용
-                .requestMatchers("/api/me").hasRole("USER")
-                .anyRequest().authenticated()              // 나머지는 인증 필요
+                .requestMatchers("/api/login").permitAll()   // 로그인 API는 누구에게나 허용
+                .requestMatchers("/api/me").hasRole("USER")  // /api/me 요청은 오직 "USER 권한을 가진 사용자"만 허용
+                .anyRequest().authenticated()                // 나머지는 인증 필요
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 등록
 
