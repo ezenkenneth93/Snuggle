@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,14 +8,27 @@ export default function SubmitForm() {
   const [userQuestion, setUserQuestion] = useState('');    // 질문 텍스트 상태
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 여부 (중복 제출 방지용)
   const [submitResult, setSubmitResult] = useState(null);  // 결과 메시지 상태
+  const [statusText, setStatusText] = useState('제출 중...'); // ← 초기 상태
 
   // navigate 훅 정의
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (isSubmitting) {
+      // 3초 뒤에 상태 문구 변경
+      timer = setTimeout(() => {
+        setStatusText('AI 피드백 생성 중...');
+      }, 3000);
+    }
+    return () => clearTimeout(timer); // cleanup
+  }, [isSubmitting]);
 
   // ✅ 제출 이벤트 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();              // 폼 기본 제출 동작(새로고침) 방지
     setIsSubmitting(true);          // 버튼 비활성화 및 로딩 UI용
+    setStatusText('제출 중...');
     setSubmitResult(null);          // 결과 메시지 초기화
 
     const token = localStorage.getItem('token');  // JWT 토큰 로컬 스토리지에서 가져오기
@@ -54,6 +67,29 @@ export default function SubmitForm() {
       setIsSubmitting(false);       // 로딩 상태 해제
     }
   };
+
+  const Spinner = () => (
+    <svg
+      className="animate-spin h-5 w-5 text-white inline-block mr-2"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      />
+    </svg>
+  );
 
   return (
     <div className="min-h-screen bg-yellow-50">
@@ -107,13 +143,21 @@ export default function SubmitForm() {
             {/* 제출 버튼 */}
             <button
               type="submit"
-              className={`w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition ${
+              className={`w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition flex items-center justify-center ${
                 isSubmitting && 'opacity-50 cursor-not-allowed'
               }`}
-              disabled={isSubmitting}  // 제출 중엔 비활성화
+              disabled={isSubmitting}
             >
-              {isSubmitting ? '제출 중...' : '제출하기'}
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  {statusText}
+                </>
+              ) : (
+                '제출하기'
+              )}
             </button>
+
 
             {/* 제출 결과 메시지 */}
             {submitResult && (

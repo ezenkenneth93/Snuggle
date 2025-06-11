@@ -10,21 +10,29 @@ import SubmitComplete from './pages/user/SubmitComplete';
 import MyPage from './pages/user/MyPage';
 import Feedback from './pages/user/Feedback';
 import Navbar from "./components/Navbar";
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminUserDetailPage from './pages/admin/AdminUserDetailPage';
+import AdminLogout from './pages/admin/AdminLogout';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // ❗이 줄이 없음
+
 
   useEffect(() => {
-    // 토큰 유무로 로그인 여부 판단
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const userToken = localStorage.getItem("token");
+    const adminToken = localStorage.getItem("adminToken");
+
+    setIsLoggedIn(!!userToken);
+    setIsAdminLoggedIn(!!adminToken); // 관리자 로그인 상태도 체크
   }, []);
 
   return (
     <>
       <BrowserRouter>
         {/* ✅ Router 내부에 위치해야 Link 작동 */}
-        <Navbar isLoggedIn={isLoggedIn} />
+        <Navbar isLoggedIn={isLoggedIn} isAdminLoggedIn={isAdminLoggedIn} /> {/* 👈 여기 */}
         
         <Routes>
           {/* 첫 접속시 보여질 컴포넌트트 */}
@@ -39,7 +47,10 @@ function App() {
           <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
 
           {/* 관리자 */}
-          {/* <Route path="/admin/dashboard" element={<Dashboard />} /> */}
+          <Route path="/admin/login" element={<AdminLoginPage setIsAdminLoggedIn={setIsAdminLoggedIn}/>} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />}/>
+          <Route path="/admin/users/:userId" element={<AdminUserDetailPage />} />
+          <Route path="/admin/logout" element={<AdminLogout setIsAdminLoggedIn={setIsAdminLoggedIn} />} />
         </Routes>
       </BrowserRouter>
     </>

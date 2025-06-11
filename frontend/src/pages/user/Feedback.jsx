@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function FeedbackPage() {
@@ -9,6 +9,8 @@ export default function FeedbackPage() {
   const [homeworkData, setHomeworkData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   // ✅ 숙제 단일 조회 API 호출
   useEffect(() => {
@@ -69,15 +71,7 @@ return (
               </p>
             </section>
 
-            {/* 2. AI 피드백 */}
-            <section className="bg-gray-50 p-6 rounded-lg border-l-4 border-yellow-500 shadow-inner">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">🤖 AI 피드백</h3>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {homeworkData.aiFeedback || '아직 피드백 기능 미구현'}
-              </p>
-            </section>
-
-            {/* 3. 나의 질문 */}
+            {/* 2. 나의 질문 */}
             <section className="bg-gray-50 p-6 rounded-lg border-l-4 border-blue-500 shadow-inner">
               <h3 className="text-2xl font-semibold text-gray-800 mb-2">💬 나의 질문</h3>
               <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
@@ -85,13 +79,31 @@ return (
               </p>
             </section>
 
-            {/* 4. AI 답변 */}
-            <section className="bg-gray-50 p-6 rounded-lg border-l-4 border-green-700 shadow-inner">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">📝 AI 답변</h3>
+            {/* 3. AI 피드백 */}
+            <section className="bg-gray-50 p-6 rounded-lg border-l-4 border-yellow-500 shadow-inner">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">🤖 AI 피드백</h3>
               <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {homeworkData.aiAnswer || '아직 AI답변기능 미구현'}
+                {homeworkData.aiFeedback || '아직 피드백 기능 미구현'}
               </p>
             </section>
+
+            {/* 버튼 영역 */}
+            <div className="flex justify-center gap-2 mt-10">
+              <button
+                onClick={() => navigate('/')}
+                className="bg-green-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-green-700 transition"
+              >
+                홈으로
+              </button>
+              <button
+                onClick={() => navigate('/mypage')}
+                className="bg-blue-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-600 transition"
+              >
+                마이페이지
+              </button>
+            </div>
+
+
           </div>
         </div>
       </div>

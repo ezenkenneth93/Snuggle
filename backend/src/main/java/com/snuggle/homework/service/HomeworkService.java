@@ -1,6 +1,10 @@
 package com.snuggle.homework.service;
 
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.snuggle.homework.domain.dto.HomeworkRequest;
@@ -10,11 +14,7 @@ import com.snuggle.homework.domain.entity.User;
 import com.snuggle.homework.repository.HomeworkRepository;
 import com.snuggle.homework.repository.UserRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -23,20 +23,33 @@ public class HomeworkService {
     private final HomeworkRepository homeworkRepository;
     private final UserRepository userRepository;
 
+    private final GptService gptService;   // ← 추가
+
     // 1. 숙제 제출
     public HomeworkResponse submitHomework(HomeworkRequest dto, String phoneNumber) {
+        // 1) 사용자 조회
         User user = userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
+        // 2) GPT 서버에 피드백 요청
+        String feedback = gptService.getFeedback(dto.getUserHomework(), dto.getUserQuestion());
+
+        // 3) 엔티티 생성 (GPT 피드백을 aiFeedback 필드에 담아서)
         Homework homework = Homework.builder()
-                .user(user)
-                .userHomework(dto.getUserHomework())
-                .userQuestion(dto.getUserQuestion())
-                .build();
+            .user(user)
+            .userHomework(dto.getUserHomework())
+            .userQuestion(dto.getUserQuestion())
+            .aiFeedback(feedback)         // ← 피드백 저장
+            .aiAnswer("")                 // 필요하면 따로 채워도 좋아
+            .build();
 
+        // 4) DB에 저장
         Homework saved = homeworkRepository.save(homework);
+
+        // 5) DTO로 변환 후 반환
         return toResponse(saved);
     }
+
 
     // 2. 내 숙제 전체 조회
     public List<HomeworkResponse> getMyHomeworks(String phoneNumber) {

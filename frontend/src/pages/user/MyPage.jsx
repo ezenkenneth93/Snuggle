@@ -79,22 +79,35 @@ export default function MyPage() {
                 불러오는 중...
               </div>
             ) : homeworkData ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  { title: "📚 내 숙제", data: homeworkData.userHomework || '제출된 숙제가 없습니다.', border: "border-green-600" },
-                  { title: "💬 피드백", data: homeworkData.aiFeedback || '아직 피드백이 없습니다.', border: "border-green-600" },
-                  { title: "📝 내 질문", data: homeworkData.userQuestion || '질문을 하지 않으셨습니다.', border: "border-yellow-500" },
-                  { title: "🤖 AI의 답변", data: homeworkData.aiAnswer || '아직 답변이 없습니다.', border: "border-yellow-500" }
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`bg-white rounded-xl shadow-lg p-6 border-l-4 ${item.border} transition-transform hover:scale-[1.02]`}
-                  >
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{item.data}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* 왼쪽: 숙제 + 질문 */}
+                <div className="md:col-span-1 space-y-4">
+                  {[
+                    { title: "📚 내 숙제", data: homeworkData.userHomework || '제출된 숙제가 없습니다.', border: "border-green-600" },
+                    { title: "📝 내 질문", data: homeworkData.userQuestion || '질문을 하지 않으셨습니다.', border: "border-yellow-500" }
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`bg-white rounded-xl shadow-lg p-6 border-l-4 ${item.border} transition-transform hover:scale-[1.02] h-[200px] overflow-y-auto`}
+                    >
+                      <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{item.data}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 오른쪽: 피드백 */}
+                <div className="md:col-span-2">
+                  <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-600 transition-transform hover:scale-[1.01] h-[420px] overflow-y-auto">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">💬 피드백</h3>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {homeworkData.aiFeedback || '아직 피드백이 없습니다.'}
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
+
+
             ) : (
               <div className="text-red-600 text-center text-lg">해당 날짜의 숙제가 없습니다.</div>
             )}

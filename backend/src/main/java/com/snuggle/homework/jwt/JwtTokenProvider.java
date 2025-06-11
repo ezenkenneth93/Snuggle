@@ -47,6 +47,27 @@ public class JwtTokenProvider {
     }
 
     /**
+     * 관리자 로그인을 위한 메서드
+     */
+    public String createToken(String username, String role) {
+    Date now = new Date();
+    Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+    Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+
+    Claims claims = Jwts.claims().setSubject(username);
+    claims.put("role", role); // 예: "ROLE_ADMIN"
+
+    return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+
+    /**
      * JWT에서 사용자 phoneNumber 추출
      * - subject는 JWT 생성 시 phoneNumber로 설정됨
      */
@@ -88,5 +109,16 @@ public class JwtTokenProvider {
                 .getBody()
                 .get("role", String.class); // "role" 클레임에서 문자열 추출
     }
+
+      /** subject에 저장된 username을 꺼내는 메서드 */
+    public String getUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+    
 
 }
