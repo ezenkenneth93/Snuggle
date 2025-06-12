@@ -1,12 +1,34 @@
 package com.snuggle.homework.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
-@Table(name = "homework")
+@Table(
+  name = "homework",
+  uniqueConstraints = @UniqueConstraint(
+    name = "uq_homework_user_date",
+    columnNames = {"user_id","submitted_date"}
+  )
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,6 +44,7 @@ public class Homework {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt;
 
     @Lob
@@ -39,9 +62,14 @@ public class Homework {
     @Lob
     @Column(name = "ai_answer")
     private String aiAnswer;
-    // insert 직전에 자동으로 호출된다. 현재 시각으로 채워져 저장된다.
+
+    // 가상 컬럼 매핑 (읽기 전용)
+    @Column(name="submitted_date", insertable=false, updatable=false)
+    private LocalDate submittedDate;
+
     @PrePersist
     public void onCreate() {
         this.submittedAt = LocalDateTime.now();
     }
 }
+

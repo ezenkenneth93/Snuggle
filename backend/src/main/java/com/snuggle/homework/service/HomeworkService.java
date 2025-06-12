@@ -11,6 +11,7 @@ import com.snuggle.homework.domain.dto.HomeworkRequest;
 import com.snuggle.homework.domain.dto.HomeworkResponse;
 import com.snuggle.homework.domain.entity.Homework;
 import com.snuggle.homework.domain.entity.User;
+import com.snuggle.homework.domain.exception.DuplicateSubmissionException;
 import com.snuggle.homework.repository.HomeworkRepository;
 import com.snuggle.homework.repository.UserRepository;
 
@@ -30,6 +31,12 @@ public class HomeworkService {
         // 1) 사용자 조회
         User user = userRepository.findByPhoneNumber(phoneNumber)
             .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        // 1-1) 숙제를 제출했는지 여부 : countBy 로 오늘 제출 여부 확인
+        Long userId = user.getUserId();
+        if (homeworkRepository.countByUser_UserIdAndSubmittedDate(userId, LocalDate.now()) > 0) {
+            throw new DuplicateSubmissionException("오늘 이미 숙제를 제출하셨습니다.");
+        }
 
         // 2) GPT 서버에 피드백 요청
         String feedback = gptService.getFeedback(dto.getUserHomework(), dto.getUserQuestion());

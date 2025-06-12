@@ -9,6 +9,7 @@ export default function SubmitForm() {
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 여부 (중복 제출 방지용)
   const [submitResult, setSubmitResult] = useState(null);  // 결과 메시지 상태
   const [statusText, setStatusText] = useState('제출 중...'); // ← 초기 상태
+  
 
   // navigate 훅 정의
   const navigate = useNavigate();

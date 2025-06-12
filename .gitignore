@@ -3,3 +3,4 @@
 *.iml
 *.class
 *.log
+gpt_server/.env

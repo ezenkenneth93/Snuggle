@@ -1,12 +1,13 @@
 package com.snuggle.homework.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.snuggle.homework.domain.entity.Homework;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.snuggle.homework.domain.entity.Homework;
 
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     // 숙제 저장 메서드는 이미 JPARepository에 선언 되어있다.
@@ -19,4 +20,8 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
 
     // UserId와 날짜로 숙제 상세 조회
     List<Homework> findByUserUserIdAndSubmittedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    
+    // Oracle 호환을 위해 existsBy 대신 countBy 사용
+    long countByUser_UserIdAndSubmittedDate(Long userId, LocalDate submittedDate);
+
 }
