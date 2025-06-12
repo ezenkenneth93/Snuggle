@@ -9,10 +9,40 @@ export default function SubmitForm() {
   const [isSubmitting, setIsSubmitting] = useState(false); // 제출 중 여부 (중복 제출 방지용)
   const [submitResult, setSubmitResult] = useState(null);  // 결과 메시지 상태
   const [statusText, setStatusText] = useState('제출 중...'); // ← 초기 상태
-  
+    // 추가할 상태들
+  const [hasSubmitted, setHasSubmitted] = useState(false);  // 오늘 제출 여부
+  const [loading,      setLoading]      = useState(true);  // 조회 중 로딩 플래그
+  const [error,        setError]        = useState(null);  // 조회 오류 메시wl
 
   // navigate 훅 정의
   const navigate = useNavigate();
+
+  // 오늘 제출 여부 API 호출
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('로그인이 필요합니다.');
+      setLoading(false);
+      return;
+    }
+
+    axios.get('/api/homeworks/today', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        setHasSubmitted(res.data);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('제출 여부 조회 에러:', err.response?.status, err.response?.data);
+        setError('제출 여부 조회 실패');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+
 
   useEffect(() => {
     let timer;
@@ -91,6 +121,35 @@ export default function SubmitForm() {
       />
     </svg>
   );
+
+
+  if (loading) {
+    return <p className="text-center">불러오는 중…</p>;
+  }
+  if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
+  if (hasSubmitted) {
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-md border border-green-200 p-20 max-w-md text-center">
+            <img
+              src="/img/snuggle_sheep.png"
+              alt="Mascot"
+              className="w-32 mx-auto mb-4 animate-bounce"
+            />
+            <h2 className="text-xl font-bold text-green-700 mb-2">숙제 제출 완료</h2>
+            <p className="text-gray-700 mb-4">오늘은 이미 숙제를 제출하셨습니다.</p>
+            <button
+              onClick={() => navigate('/mypage')}
+              className="mt-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
+            >
+              내 숙제 보러가기
+            </button>
+          </div>
+        </div>
+      );
+  }
 
   return (
     <div className="min-h-screen bg-yellow-50">

@@ -26,6 +26,11 @@ public class HomeworkService {
 
     private final GptService gptService;   // ← 추가
 
+    // 0. 오늘 제출여부
+    public boolean hasSubmittedToday(Long userId) {
+        return homeworkRepository.countByUser_UserIdAndSubmittedDate(userId, LocalDate.now()) > 0;
+    }
+
     // 1. 숙제 제출
     public HomeworkResponse submitHomework(HomeworkRequest dto, String phoneNumber) {
         // 1) 사용자 조회
@@ -112,5 +117,11 @@ public class HomeworkService {
             .submittedAt(hw.getSubmittedAt())
             .build();
     }
+
+    // 숙제 제출한 날짜 반환
+    public List<LocalDate> getSubmittedDates(Long userId) {
+        return homeworkRepository.findSubmittedDatesByUserId(userId);
+    }
+
 
 }

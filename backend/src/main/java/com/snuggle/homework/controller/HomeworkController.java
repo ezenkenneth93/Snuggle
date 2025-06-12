@@ -1,18 +1,27 @@
 package com.snuggle.homework.controller;
 
-import com.snuggle.homework.domain.dto.HomeworkRequest;
-import com.snuggle.homework.domain.dto.HomeworkResponse;
-import com.snuggle.homework.service.HomeworkService;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.snuggle.homework.domain.dto.HomeworkRequest;
+import com.snuggle.homework.domain.dto.HomeworkResponse;
+import com.snuggle.homework.domain.entity.User;
+import com.snuggle.homework.repository.UserRepository;
+import com.snuggle.homework.service.HomeworkService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/homeworks")
@@ -20,6 +29,21 @@ import java.util.List;
 public class HomeworkController {
 
     private final HomeworkService homeworkService;
+    private final UserRepository userRepository;
+
+    // 0. 오늘 제출 여부 조회
+    @GetMapping("/today")
+    public ResponseEntity<Boolean> hasSubmittedToday(
+        @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal
+    ) {
+        // principal.getUsername() → phoneNumber
+        String phone = principal.getUsername();
+        User user = userRepository.findByPhoneNumber(phone)
+            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+        boolean result = homeworkService.hasSubmittedToday(user.getUserId());
+        return ResponseEntity.ok(result);
+    }
+
 
     // 1. 숙제 제출
     @PostMapping
@@ -66,5 +90,15 @@ public class HomeworkController {
             HomeworkResponse response = homeworkService.getHomeworkByDate(phoneNumber, date);
             return ResponseEntity.ok(response);
         }
+
+    // 내 제출 날짜 전체 조회
+    @GetMapping("/me/dates")
+    public ResponseEntity<List<LocalDate>> getMySubmittedDates(Principal principal) {
+        String phone = principal.getName();
+        User user = userRepository.findByPhoneNumber(phone)
+            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+        List<LocalDate> dates = homeworkService.getSubmittedDates(user.getUserId());
+        return ResponseEntity.ok(dates);
+    }
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.snuggle.homework.domain.entity.Homework;
 
@@ -23,5 +25,10 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     
     // Oracle 호환을 위해 existsBy 대신 countBy 사용
     long countByUser_UserIdAndSubmittedDate(Long userId, LocalDate submittedDate);
+
+    // 예: 사용자 ID와 월(또는 기간)을 받아 제출 날짜 리스트를 반환
+    @Query("SELECT h.submittedDate FROM Homework h WHERE h.user.userId = :userId")
+    List<LocalDate> findSubmittedDatesByUserId(@Param("userId") Long userId);
+
 
 }
