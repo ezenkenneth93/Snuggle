@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.snuggle.homework.domain.dto.SubmitRankDto;
 import com.snuggle.homework.domain.entity.Homework;
 
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
@@ -30,5 +31,27 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     @Query("SELECT h.submittedDate FROM Homework h WHERE h.user.userId = :userId")
     List<LocalDate> findSubmittedDatesByUserId(@Param("userId") Long userId);
 
+    // 현재까지 숙제를 몇 번 제출했는가?
+    @Query("SELECT COUNT(h) FROM Homework h WHERE h.user.id = :userId")
+    int countByUserId(@Param("userId") Long userId);
+
+    // 연속으로 숙제 제출한 날이 며칠인가?
+    @Query("SELECT h.submittedAt FROM Homework h WHERE h.user.id = :userId ORDER BY h.submittedAt DESC")
+    List<LocalDateTime> findSubmittedDates(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT new com.snuggle.homework.domain.dto.SubmitRankDto(
+            u.id,
+            u.name,
+            u.phoneNumber,
+            COUNT(h)
+        )
+        FROM Homework h
+        JOIN h.user u
+        WHERE FUNCTION('TO_CHAR', h.submittedAt, 'YYYY-MM') = FUNCTION('TO_CHAR', CURRENT_DATE, 'YYYY-MM')
+        GROUP BY u.id, u.name, u.phoneNumber
+        ORDER BY COUNT(h) DESC
+    """)
+    List<SubmitRankDto> findMonthlyRankingDto();
 
 }

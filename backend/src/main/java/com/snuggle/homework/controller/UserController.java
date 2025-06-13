@@ -7,16 +7,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snuggle.homework.domain.dto.LoginRequest;
+import com.snuggle.homework.domain.dto.UserRankDto;
 import com.snuggle.homework.domain.dto.UserResponse;
 import com.snuggle.homework.domain.entity.User;
 import com.snuggle.homework.jwt.JwtTokenProvider;
 import com.snuggle.homework.repository.UserRepository;
+import com.snuggle.homework.service.HomeworkService;
 import com.snuggle.homework.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final HomeworkService homeworkService;
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @PostMapping("/login")
@@ -72,6 +76,19 @@ public class UserController {
         log.info("이름 (getName)   : {}", auth.getName());
         
         return ResponseEntity.ok(response);
+    }
+
+    // 현재까지 숙제를 몇 번 제출했는가?
+    @GetMapping("/users/{userId}/homework/count")
+    public int getHomeworkCount(@PathVariable Long userId) {
+        return homeworkService.getTotalHomeworkCount(userId);
+    }
+
+    // 오늘 기준 연속으로 제출한 숙제는 몇개인가?
+    @GetMapping("users/{userId}/homework/streak")
+    public ResponseEntity<Integer> getConsecutiveDays(@PathVariable Long userId) {
+        int streak = homeworkService.getConsecutiveSubmitDays(userId);
+        return ResponseEntity.ok(streak);
     }
 
 }

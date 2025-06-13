@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.snuggle.homework.domain.dto.HomeworkRequest;
 import com.snuggle.homework.domain.dto.HomeworkResponse;
+import com.snuggle.homework.domain.dto.SubmitRankDto;
+import com.snuggle.homework.domain.dto.UserRankDto;
 import com.snuggle.homework.domain.entity.User;
+import com.snuggle.homework.jwt.CustomUserDetails;
 import com.snuggle.homework.repository.UserRepository;
 import com.snuggle.homework.service.HomeworkService;
 
@@ -91,7 +94,7 @@ public class HomeworkController {
             return ResponseEntity.ok(response);
         }
 
-    // 내 제출 날짜 전체 조회
+    // 5. 내 제출 날짜 전체 조회
     @GetMapping("/me/dates")
     public ResponseEntity<List<LocalDate>> getMySubmittedDates(Principal principal) {
         String phone = principal.getName();
@@ -100,5 +103,23 @@ public class HomeworkController {
         List<LocalDate> dates = homeworkService.getSubmittedDates(user.getUserId());
         return ResponseEntity.ok(dates);
     }
+
+    // 6. 이번달 회원 랭킹
+    @GetMapping("/rank")
+    public ResponseEntity<List<SubmitRankDto>> getSubmitRanking() {
+        List<SubmitRankDto> ranking = homeworkService.getMaskedMonthlySubmitRanking();
+        return ResponseEntity.ok(ranking);
+    }
+
+    // 7. 개인 랭킹 조회
+    @GetMapping("/rank/me")
+    public ResponseEntity<SubmitRankDto> getMyMonthlyRank(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getUser().getUserId();
+        SubmitRankDto myRank = homeworkService.getMyMonthlyRank(userId);
+        return ResponseEntity.ok(myRank);
+    }
+
+
+
 
 }

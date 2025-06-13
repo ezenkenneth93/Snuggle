@@ -27,4 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .authorities("ROLE_USER")
                 .build();
     }
+
+    public CustomUserDetails loadUserDetails(String phoneNumber) {
+        User user = userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + phoneNumber));
+        return new CustomUserDetails(user);
+    }
+
 }

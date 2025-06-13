@@ -14,6 +14,8 @@ import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUserDetailPage from './pages/admin/AdminUserDetailPage';
 import AdminLogout from './pages/admin/AdminLogout';
+import RankingPage from './pages/user/RankingPage';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -44,6 +46,7 @@ function App() {
           <Route path="/submit-complete" element={<SubmitComplete />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/ranking" element={<RankingPage />} />
           <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
 
           {/* 관리자 */}

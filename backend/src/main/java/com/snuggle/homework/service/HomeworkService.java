@@ -2,17 +2,23 @@ package com.snuggle.homework.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.snuggle.homework.domain.dto.HomeworkRequest;
 import com.snuggle.homework.domain.dto.HomeworkResponse;
+import com.snuggle.homework.domain.dto.SubmitRankDto;
+import com.snuggle.homework.domain.dto.UserRankDto;
 import com.snuggle.homework.domain.entity.Homework;
 import com.snuggle.homework.domain.entity.User;
 import com.snuggle.homework.domain.exception.DuplicateSubmissionException;
 import com.snuggle.homework.repository.HomeworkRepository;
+import com.snuggle.homework.repository.UserHomeworkCountProjection;
 import com.snuggle.homework.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -123,5 +129,66 @@ public class HomeworkService {
         return homeworkRepository.findSubmittedDatesByUserId(userId);
     }
 
+    // 현재까지 숙제 몇번 제출했는지?
+    public int getTotalHomeworkCount(Long userId) {
+        return homeworkRepository.countByUserId(userId);
+    }
 
+    // 연속으로 제출한 날은 며칠인지?
+    public int getConsecutiveSubmitDays(Long userId) {
+        List<LocalDate> dates = homeworkRepository.findSubmittedDates(userId)
+                                    .stream()
+                                    .map(LocalDateTime::toLocalDate)
+                                    .distinct()
+                                    .toList();
+
+        if (dates.isEmpty()) return 0;
+
+        // 빠른 조회를 위해 Set으로 변환
+        Set<LocalDate> dateSet = new HashSet<>(dates);
+
+        LocalDate today = LocalDate.now();
+        int streak = 0;
+
+        // 오늘부터 하루씩 줄이면서 연속 제출 여부 확인
+        while (dateSet.contains(today.minusDays(streak))) {
+            streak++;
+        }
+
+        return streak;
+    }
+
+    // 회원 전체 랭킹
+    public List<SubmitRankDto> getMaskedMonthlySubmitRanking() {
+        List<SubmitRankDto> rawList = homeworkRepository.findMonthlyRankingDto();
+        AtomicInteger rank = new AtomicInteger(1);  // ✅ 여기만 바꿈
+
+        return rawList.stream()
+            .map(dto -> SubmitRankDto.from(
+                dto.getUserId(),
+                dto.getUserName(),
+                dto.getPhoneNumber(),
+                dto.getCount(),
+                rank.getAndIncrement())  // ✅ 안전하게 증가
+            )
+            .toList();
+    }
+
+    public SubmitRankDto getMyMonthlyRank(Long userId) {
+        List<SubmitRankDto> rawList = homeworkRepository.findMonthlyRankingDto();
+
+        AtomicInteger rank = new AtomicInteger(1);
+
+        return rawList.stream()
+            .map(dto -> SubmitRankDto.from(
+                dto.getUserId(),
+                dto.getUserName(),
+                dto.getPhoneNumber(),
+                dto.getCount(),
+                rank.getAndIncrement()
+            ))
+            .filter(dto -> dto.getUserId().equals(userId))  // ✅ 내 아이디만 반환
+            .findFirst()
+            .orElse(null);
+    }
 }

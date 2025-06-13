@@ -77,6 +77,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/login").permitAll()
                 .requestMatchers("/api/gpt/**").hasAuthority("ROLE_USER")
                 .requestMatchers("/api/me").hasAuthority("ROLE_USER")
+                .requestMatchers("/api/homeworks/rank").permitAll()
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // 관리자용 추가!
                 .anyRequest().authenticated()
 )
