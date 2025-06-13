@@ -20,6 +20,8 @@ import com.snuggle.homework.domain.exception.DuplicateSubmissionException;
 import com.snuggle.homework.repository.HomeworkRepository;
 import com.snuggle.homework.repository.UserHomeworkCountProjection;
 import com.snuggle.homework.repository.UserRepository;
+import com.snuggle.homework.service.GptService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -158,37 +160,37 @@ public class HomeworkService {
         return streak;
     }
 
-    // 회원 전체 랭킹
+    // 이번달 전체 랭킹
     public List<SubmitRankDto> getMaskedMonthlySubmitRanking() {
-        List<SubmitRankDto> rawList = homeworkRepository.findMonthlyRankingDto();
-        AtomicInteger rank = new AtomicInteger(1);  // ✅ 여기만 바꿈
+        List<Object[]> rows = homeworkRepository.findMonthlyRankingRaw();
 
-        return rawList.stream()
-            .map(dto -> SubmitRankDto.from(
-                dto.getUserId(),
-                dto.getUserName(),
-                dto.getPhoneNumber(),
-                dto.getCount(),
-                rank.getAndIncrement())  // ✅ 안전하게 증가
-            )
-            .toList();
+        return rows.stream()
+        .map(r -> {
+            // 컬럼 순서: 0:userId,1:name,2:phone,3:submission_count,4:ranking
+            Long   userId          = ((Number)r[0]).longValue();
+            String userName        = (String) r[1];
+            String phoneNumber     = (String) r[2];
+            long   submissionCount = ((Number)r[3]).longValue();
+            int    ranking         = ((Number)r[4]).intValue();
+
+            return SubmitRankDto.from(
+            userId,
+            userName,
+            phoneNumber,
+            submissionCount,
+            ranking
+            );
+        })
+        .collect(Collectors.toList());
     }
 
+    // 이번달 나의 랭킹
     public SubmitRankDto getMyMonthlyRank(Long userId) {
-        List<SubmitRankDto> rawList = homeworkRepository.findMonthlyRankingDto();
-
-        AtomicInteger rank = new AtomicInteger(1);
-
-        return rawList.stream()
-            .map(dto -> SubmitRankDto.from(
-                dto.getUserId(),
-                dto.getUserName(),
-                dto.getPhoneNumber(),
-                dto.getCount(),
-                rank.getAndIncrement()
-            ))
-            .filter(dto -> dto.getUserId().equals(userId))  // ✅ 내 아이디만 반환
-            .findFirst()
-            .orElse(null);
+        return getMaskedMonthlySubmitRanking().stream()
+        .filter(dto -> dto.getUserId().equals(userId))
+        .findFirst()
+        .orElse(null);
     }
+
+
 }

@@ -39,20 +39,26 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     @Query("SELECT h.submittedAt FROM Homework h WHERE h.user.id = :userId ORDER BY h.submittedAt DESC")
     List<LocalDateTime> findSubmittedDates(@Param("userId") Long userId);
 
-    // 전체 랭킹 조회
-    @Query("""
-        SELECT new com.snuggle.homework.domain.dto.SubmitRankDto(
-            u.id,
-            u.name,
-            u.phoneNumber,
-            COUNT(h)
-        )
-        FROM Homework h
-        JOIN h.user u
-        WHERE FUNCTION('TO_CHAR', h.submittedAt, 'YYYY-MM') = FUNCTION('TO_CHAR', CURRENT_DATE, 'YYYY-MM')
-        GROUP BY u.id, u.name, u.phoneNumber
-        ORDER BY COUNT(h) DESC
-    """)
-    List<SubmitRankDto> findMonthlyRankingDto();
+    // ↓ 이렇게 변경
+    @Query(value = """
+        SELECT
+            u.user_id AS userId,
+            u.name AS name,
+            u.phone_number AS phoneNumber,
+            sub.submission_count AS submissionCount,
+            sub.ranking AS ranking
+        FROM (
+            SELECT
+                h.user_id,
+                COUNT(h.id) AS submission_count,
+                RANK() OVER (ORDER BY COUNT(h.id) DESC) AS ranking
+            FROM homework h
+            WHERE TO_CHAR(h.submitted_at, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM')
+            GROUP BY h.user_id
+        ) sub
+        JOIN user_info u ON u.user_id = sub.user_id
+    """, nativeQuery = true)
+    List<Object[]> findMonthlyRankingRaw();
+
 
 }

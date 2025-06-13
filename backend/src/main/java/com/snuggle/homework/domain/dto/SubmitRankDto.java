@@ -11,15 +11,8 @@ public class SubmitRankDto {
     private Long userId;
     private String userName;
     private String phoneNumber;
-    private int count;
-    private int rank;
-
-    public SubmitRankDto(Long userId, String userName, String phoneNumber, Long count) {
-        this.userId = userId;
-        this.userName = userName;
-        this.phoneNumber = phoneNumber;
-        this.count = count.intValue(); // ← 핵심
-    }
+    private int submissionCount; // ← 쿼리에서 submission_count로 넘어옴
+    private int ranking;         // ← 쿼리에서 ranking으로 넘어옴
 
     public static String maskName(String name) {
         if (name == null || name.length() < 2) return name;
@@ -30,13 +23,11 @@ public class SubmitRankDto {
     public static String maskPhone(String phone) {
         if (phone == null || phone.length() < 7) return phone;
 
-        // "010-1234-5678" 형식이면
         if (phone.contains("-")) {
             int lastDash = phone.lastIndexOf("-");
             return phone.substring(0, phone.indexOf("-") + 1) + "****" + phone.substring(lastDash);
         }
 
-        // "01012345678" 형식
         if (phone.length() == 11) {
             return phone.substring(0, 3) + "-****-" + phone.substring(7);
         }
@@ -44,14 +35,14 @@ public class SubmitRankDto {
         return phone;
     }
 
-
-    public static SubmitRankDto from(Long userId, String userName, String phoneNumber, int count, int rank) {
+    // 새 쿼리 결과용 정적 팩토리 메서드
+    public static SubmitRankDto from(Long userId, String userName, String phoneNumber, Long submissionCount, Integer ranking) {
         return new SubmitRankDto(
             userId,
             maskName(userName),
             maskPhone(phoneNumber),
-            count,
-            rank
+            submissionCount != null ? submissionCount.intValue() : 0,
+            ranking != null ? ranking : 0
         );
     }
 }

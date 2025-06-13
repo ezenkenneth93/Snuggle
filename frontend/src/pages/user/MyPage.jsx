@@ -17,76 +17,47 @@ export default function MyPage() {
   const [submittedDates, setSubmittedDates] = useState([]);
   const [datesError, setDatesError] = useState(null);
 
-  // 내 순위 가져오기
-  useEffect(() => {
-    const fetchMyRank = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("/api/homeworks/rank/me", {
-          headers: { Authorization: `Bearer ${token}` },
+
+    // --- userId 한 번만 가져오기 ---
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      axios
+        .get("/api/me", { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setUserId(res.data.userId))
+        .catch(err => console.error("유저 정보 가져오기 실패:", err));
+    }, []);
+
+    // --- userId가 준비된 후에만 호출 ---
+    useEffect(() => {
+      if (!userId) return;
+      const token = localStorage.getItem("token");
+
+      // 1) 내 순위
+      axios
+        .get("/api/homeworks/rank/me", { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setMyRank(res.data.ranking))
+        .catch(err => {
+          console.error("개인 랭킹 조회 실패:", err);
+          setMyRank(null);
         });
-        setMyRank(res.data.rank);
-      } catch (err) {
-        console.error("개인 랭킹 조회 실패:", err);
-        setMyRank(null);
-      }
-    };
 
-    fetchMyRank();
-  }, []);
-
-
-  // 연속 제출일수 가져오기
-  useEffect(() => {
-    if (!userId) return;
-
-    const fetchStreak = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`/api/users/${userId}/homework/streak`, {
-          headers: { Authorization: `Bearer ${token}` },
+      // 2) 연속 제출 일수
+      axios
+        .get(`/api/users/${userId}/homework/streak`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setStreakCount(res.data))
+        .catch(err => {
+          console.error("연속 제출 일수 조회 실패:", err);
         });
-        setStreakCount(res.data);
-      } catch (err) {
-        console.error("연속 제출 일수 조회 실패:", err);
-      }
-    };
 
-    fetchStreak();
-  }, [userId]);
-
-  // 유저 정보 가져오기
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("/api/me", {
-          headers: { Authorization: `Bearer ${token}` },
+      // 3) 총 제출 횟수
+      axios
+        .get(`/api/users/${userId}/homework/count`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setTotalCount(res.data))
+        .catch(err => {
+          console.error("총 제출 횟수 조회 실패:", err);
         });
-        setUserId(res.data.userId);  // ✅ 바로 여기서 userId 추출
-      } catch (err) {
-        console.error("유저 정보 가져오기 실패:", err);
-      }
-    };
 
-    fetchUserInfo();
-  }, []);
-
-  // 위에서 가져온 userId로 해당 회원이 몇번 숙제 제출했는지
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`/api/users/${userId}/homework/count`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTotalCount(res.data);
-      } catch (err) {
-        console.error("제출 횟수 조회 실패:", err);
-      }
-    };
-    fetchCount();
-  }, [userId]);
+        }, [userId]);
 
 
   // 마운트 시 제출된 날짜 목록 가져오기
@@ -147,23 +118,29 @@ export default function MyPage() {
         {/* 숙제 제출 횟수, 연속, 순위 */}
         <div className="mb-6">
           <div className="bg-white shadow-md rounded-2xl px-8 py-6 border-l-8 border-green-400 transition-transform hover:scale-[1.01]">
-            <h2 className="text-2xl font-bold text-blue-700 mb-2">🏅 이번 달 나의 순위:</h2>
-            <p className="text-gray-800 text-lg">
-              현재 <span className="font-extrabold text-blue-600 text-xl">{myRank ?? '계산 중...'}</span>위예요!
-            </p>
-            <br/><br/>
-
-            <h2 className="text-2xl font-bold text-yellow-700 mb-2">🔥 연속 제출 일수:</h2>
-            <p className="text-gray-800 text-lg">
-              현재 <span className="font-extrabold text-yellow-600 text-xl">{streakCount}</span>일 연속으로 제출 중이에요!
-            </p>
-            <br/><br/>
-
-            <h2 className="text-2xl font-bold text-green-700 mb-2">📊 숙제 제출 현황:</h2>
-            <p className="text-gray-800 text-lg">
-              지금까지 총 <span className="font-extrabold text-green-600 text-xl">{totalCount}</span> 회 제출했어요!
-            </p>
-
+             <div className="flex justify-between items-center space-x-6">
+              {/* 1. 순위 */}
+              <div className="flex-1 text-center">
+                <h2 className="text-2xl font-bold text-blue-700 mb-1">🏅 이번 달 내 랭킹</h2>
+                <p className="text-gray-800 text-lg">
+                  현재 <span className="font-extrabold text-blue-600 text-xl">{myRank}</span>위예요!
+                </p>
+              </div>
+              {/* 2. 연속 제출 일수 */}
+              <div className="flex-1 text-center">
+                <h2 className="text-2xl font-bold text-yellow-700 mb-1">🔥 연속 제출 일수</h2>
+                <p className="text-gray-800 text-lg">
+                  현재 <span className="font-extrabold text-yellow-600 text-xl">{streakCount}</span>일 연속 중이에요!
+                </p>
+              </div>
+              {/* 3. 총 제출 횟수 */}
+              <div className="flex-1 text-center">
+                <h2 className="text-2xl font-bold text-green-700 mb-1">📊 총 제출 현황</h2>
+                <p className="text-gray-800 text-lg">
+                  지금까지 총 <span className="font-extrabold text-green-600 text-xl">{totalCount}</span>회 제출했어요!
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
