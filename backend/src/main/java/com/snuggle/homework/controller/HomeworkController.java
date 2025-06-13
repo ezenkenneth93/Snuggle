@@ -36,14 +36,9 @@ public class HomeworkController {
 
     // 0. 오늘 제출 여부 조회
     @GetMapping("/today")
-    public ResponseEntity<Boolean> hasSubmittedToday(
-        @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal
-    ) {
-        // principal.getUsername() → phoneNumber
-        String phone = principal.getUsername();
-        User user = userRepository.findByPhoneNumber(phone)
-            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
-        boolean result = homeworkService.hasSubmittedToday(user.getUserId());
+    public ResponseEntity<Boolean> hasSubmittedToday(@AuthenticationPrincipal CustomUserDetails principal) {
+        Long userId = principal.getUser().getUserId();
+        boolean result = homeworkService.hasSubmittedToday(userId);
         return ResponseEntity.ok(result);
     }
 

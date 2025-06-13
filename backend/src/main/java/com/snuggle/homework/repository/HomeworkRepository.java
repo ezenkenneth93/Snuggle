@@ -39,6 +39,7 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     @Query("SELECT h.submittedAt FROM Homework h WHERE h.user.id = :userId ORDER BY h.submittedAt DESC")
     List<LocalDateTime> findSubmittedDates(@Param("userId") Long userId);
 
+    // 전체 랭킹 조회
     @Query("""
         SELECT new com.snuggle.homework.domain.dto.SubmitRankDto(
             u.id,

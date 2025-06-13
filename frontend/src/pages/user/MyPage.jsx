@@ -147,19 +147,21 @@ export default function MyPage() {
         {/* 숙제 제출 횟수, 연속, 순위 */}
         <div className="mb-6">
           <div className="bg-white shadow-md rounded-2xl px-8 py-6 border-l-8 border-green-400 transition-transform hover:scale-[1.01]">
-            <h2 className="text-2xl font-bold text-green-700 mb-2">📊 숙제 제출 현황:</h2>
+            <h2 className="text-2xl font-bold text-blue-700 mb-2">🏅 이번 달 나의 순위:</h2>
             <p className="text-gray-800 text-lg">
-              지금까지 총 <span className="font-extrabold text-green-600 text-xl">{totalCount}</span> 회 제출했어요!
+              현재 <span className="font-extrabold text-blue-600 text-xl">{myRank ?? '계산 중...'}</span>위예요!
             </p>
             <br/><br/>
+
             <h2 className="text-2xl font-bold text-yellow-700 mb-2">🔥 연속 제출 일수:</h2>
             <p className="text-gray-800 text-lg">
               현재 <span className="font-extrabold text-yellow-600 text-xl">{streakCount}</span>일 연속으로 제출 중이에요!
             </p>
             <br/><br/>
-            <h2 className="text-2xl font-bold text-blue-700 mb-2">🏅 이번 달 나의 순위:</h2>
+
+            <h2 className="text-2xl font-bold text-green-700 mb-2">📊 숙제 제출 현황:</h2>
             <p className="text-gray-800 text-lg">
-              현재 <span className="font-extrabold text-blue-600 text-xl">{myRank ?? '계산 중...'}</span>위예요!
+              지금까지 총 <span className="font-extrabold text-green-600 text-xl">{totalCount}</span> 회 제출했어요!
             </p>
 
           </div>

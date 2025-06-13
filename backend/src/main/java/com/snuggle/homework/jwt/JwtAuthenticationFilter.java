@@ -50,9 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtTokenProvider.getUsername(token);
                 userDetails = adminDetailsService.loadUserByUsername(username);
             } else {
-                // 일반 사용자: subject는 phoneNumber
+                // ✅ 일반 사용자: subject는 phoneNumber
                 String phone = jwtTokenProvider.getPhoneNumber(token);
-                userDetails = userDetailsService.loadUserByUsername(phone);
+                userDetails = userDetailsService.loadUserDetails(phone);  // ✅ CustomUserDetails 반환
             }
 
             // 4. 권한 객체 생성
@@ -80,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 8. 다음 필터 체인 실행
         filterChain.doFilter(request, response);
     }
+
 
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
