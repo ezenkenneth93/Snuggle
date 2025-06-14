@@ -4,7 +4,7 @@ server:
 spring:  
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:XE  # 실제 URL로 조정
-    username: agent8
+    username: agent
     password: 1234
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:

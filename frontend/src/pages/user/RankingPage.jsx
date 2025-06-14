@@ -12,6 +12,7 @@ export default function RankingPage() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRanking(res.data);
+        console.log(res.data)
       } catch (err) {
         console.error("랭킹 불러오기 실패:", err);
       }
@@ -33,12 +34,12 @@ return (
           className="bg-white rounded-2xl shadow-md p-4 flex flex-col justify-between h-36"
         >
           <div>
-            <p className="text-lg font-semibold">🏅 {user.rank}위</p>
+            <p className="text-lg font-semibold">🏅 {user.ranking}위</p>
             <p className="text-gray-700 text-sm">👤 {user.userName}</p>
             <p className="text-gray-700 text-sm">📱 {user.phoneNumber}</p>
           </div>
           <div className="text-right text-green-600 text-lg font-bold">
-            {user.count}회
+            제출횟수 : {user.submissionCount}회
           </div>
         </div>
       ))}
