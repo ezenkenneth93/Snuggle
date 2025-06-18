@@ -24,3 +24,8 @@ logging:
     com.snuggle.homework.controller: DEBUG
     com.snuggle.homework.jwt: DEBUG
     org.springframework.security: INFO
+  
+kakao:
+  client-id: ed175771a7d271bb81cff7bf21400488
+  redirect-uri: http://localhost:3000/oauth/kakao/callback
+

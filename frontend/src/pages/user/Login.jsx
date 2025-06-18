@@ -1,5 +1,6 @@
 import React, { useState }  from 'react';
 import { useNavigate } from "react-router-dom"; // ✅ 이 줄이 필요해요
+import KakaoLoginButton from '../../components/KakaoLoginButton'; // 경로는 프로젝트 구조에 맞게 조정
 
 export default function Login({ setIsLoggedIn }) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -79,9 +80,10 @@ export default function Login({ setIsLoggedIn }) {
             </button>
           </form>
 
-          <p className="text-sm text-center text-gray-500 mt-6">
-            계정이 없으신가요? <a href="#" className="text-green-600 hover:underline">회원가입</a>
-          </p>
+          {/*  */}
+          <div className="text-sm text-center text-gray-500 mt-6">
+            <p className="text-green-600 hover:underline"><KakaoLoginButton /></p>
+          </div>
         </div>
       </div>
     </div>

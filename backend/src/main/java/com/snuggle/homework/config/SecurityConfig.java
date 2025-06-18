@@ -70,6 +70,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // .cors() // ✅ (1) CORS 활성화
+            // .and()
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -79,6 +81,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/me").hasAuthority("ROLE_USER")
                 .requestMatchers("/api/homeworks/rank").permitAll()
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // 관리자용 추가!
+                .requestMatchers("/api/oauth/kakao/**").permitAll() // ✅ (2) 카카오 OAuth 경로 허용
                 .anyRequest().authenticated()
 )
             .authenticationProvider(userAuthenticationProvider())   // 사용자 인증 처리

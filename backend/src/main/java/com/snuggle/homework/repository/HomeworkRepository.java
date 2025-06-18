@@ -51,7 +51,7 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
             SELECT
                 h.user_id,
                 COUNT(h.id) AS submission_count,
-                RANK() OVER (ORDER BY COUNT(h.id) DESC) AS ranking
+                DENSE_RANK() OVER (ORDER BY COUNT(h.id) DESC) AS ranking
             FROM homework h
             WHERE TO_CHAR(h.submitted_at, 'YYYY-MM') = TO_CHAR(SYSDATE, 'YYYY-MM')
             GROUP BY h.user_id
@@ -59,6 +59,4 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long> {
         JOIN user_info u ON u.user_id = sub.user_id
     """, nativeQuery = true)
     List<Object[]> findMonthlyRankingRaw();
-
-
 }

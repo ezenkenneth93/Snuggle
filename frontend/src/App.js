@@ -15,6 +15,8 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUserDetailPage from './pages/admin/AdminUserDetailPage';
 import AdminLogout from './pages/admin/AdminLogout';
 import RankingPage from './pages/user/RankingPage';
+import KakaoRedirectHandler from './components/KakaoRedirectHandler';
+import KakaoLoginButton from './components/KakaoLoginButton';
 
 
 function App() {
@@ -39,6 +41,7 @@ function App() {
         <Routes>
           {/* 첫 접속시 보여질 컴포넌트트 */}
           <Route path="/" element={<Home />} />
+          <Route path="/oauth/kakao/callback" element={<KakaoRedirectHandler setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
 
           {/* 사용자 */}
