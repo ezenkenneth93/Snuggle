@@ -13,6 +13,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
+        legacy_limit_handler: true  # ✅ 페이징시 ROWNUM 사용
     show-sql: true
     open-in-view: false
 

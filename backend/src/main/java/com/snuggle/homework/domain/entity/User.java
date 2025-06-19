@@ -42,4 +42,8 @@ public class User {
 
     @Column(name = "EXPIRATION_DATE")
     private LocalDate expirationDate;
+
+    @Column(name = "KAKAO_ID", unique = true)
+    private String kakaoId;
+
 }

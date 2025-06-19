@@ -15,6 +15,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUserDetailPage from './pages/admin/AdminUserDetailPage';
 import AdminLogout from './pages/admin/AdminLogout';
 import RankingPage from './pages/user/RankingPage';
+import ExtraInfoPage from './pages/user/ExtraInfoPage';
 import KakaoRedirectHandler from './components/KakaoRedirectHandler';
 import KakaoLoginButton from './components/KakaoLoginButton';
 
@@ -39,7 +40,7 @@ function App() {
         <Navbar isLoggedIn={isLoggedIn} isAdminLoggedIn={isAdminLoggedIn} /> {/* 👈 여기 */}
         
         <Routes>
-          {/* 첫 접속시 보여질 컴포넌트트 */}
+          {/* 첫 접속시 보여질 컴포넌트 */}
           <Route path="/" element={<Home />} />
           <Route path="/oauth/kakao/callback" element={<KakaoRedirectHandler setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
@@ -51,6 +52,8 @@ function App() {
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/ranking" element={<RankingPage />} />
           <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/extra-info" element={<ExtraInfoPage setIsLoggedIn={setIsLoggedIn} />} />
+
 
           {/* 관리자 */}
           <Route path="/admin/login" element={<AdminLoginPage setIsAdminLoggedIn={setIsAdminLoggedIn}/>} />

@@ -15,7 +15,7 @@ const KakaoLoginButton = () => {
       `?client_id=${KAKAO_CLIENT_ID}` +           // 앱 REST API 키
       `&redirect_uri=${REDIRECT_URI}` +           // 리디렉션 받을 URI
       `&response_type=code`                       // 인가 코드 발급 요청
-      // `&prompt=login`;                            // ✅ 이미 동의한 사용자도 매번 동의창 다시 띄움 (테스트용으로 매우 유용)
+      // + `&prompt=login`;                            // ✅ 이미 동의한 사용자도 매번 동의창 다시 띄움 (테스트용으로 매우 유용)
 
     // ✅ 생성된 URL 콘솔에 출력 (디버깅 용도)
     console.log("생성된 URL:", kakaoAuthUrl);
