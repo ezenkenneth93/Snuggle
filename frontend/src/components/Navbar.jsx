@@ -22,6 +22,7 @@ export default function Navbar({ isLoggedIn, isAdminLoggedIn }) {
       {/* 로그인 상태에 따라 메뉴 분기 */}
       {isAdminLoggedIn ? (
         <div className="flex items-center space-x-4">
+          <Link to="/ranking"   className="hover:text-green-500">랭킹</Link>
           <Link to="/admin/dashboard" className="hover:text-green-500">관리자홈</Link>
           <Link to="/admin/logout"    className="hover:text-red-500">로그아웃</Link>
         </div>
@@ -34,6 +35,7 @@ export default function Navbar({ isLoggedIn, isAdminLoggedIn }) {
         </div>
       ) : (
         <div className="flex items-center space-x-4">
+          <Link to="/ranking"   className="hover:text-green-500">랭킹</Link>
           <Link to="/login" className="hover:text-green-500">로그인</Link>
         </div>
       )}

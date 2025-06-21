@@ -12,6 +12,7 @@ export default function AdminUserDetailPage() {
   const [homeworkData, setHomeworkData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [submittedDates, setSubmittedDates] = useState([]);
 
   // 회원 기본 정보 조회
   useEffect(() => {
@@ -28,6 +29,26 @@ export default function AdminUserDetailPage() {
     };
     fetchUser();
   }, [userId]);
+
+
+  // 제출 날짜 목록 가져오기
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (!token || !userId) return;
+
+    axios
+      .get(`/api/admin/users/${userId}/homework/dates`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(res => {
+        const dates = res.data.map(date => new Date(date));
+        setSubmittedDates(dates);
+      })
+      .catch(err => {
+        console.error('제출 날짜 목록 조회 실패:', err);
+      });
+  }, [userId]);
+
 
   // 날짜 선택 시 해당 날짜 숙제 조회
   const handleDateSelect = async (date) => {
@@ -58,7 +79,10 @@ export default function AdminUserDetailPage() {
     setIsModalOpen(false);
     setHomeworkData(null);
   };
-
+  
+  if (!user) {
+    return <div className="text-center py-20 text-gray-500">회원 정보를 불러오는 중...</div>;
+  }
   return (
     <div className="min-h-screen bg-yellow-50">
       <div className="flex justify-between items-center p-6">
@@ -67,8 +91,8 @@ export default function AdminUserDetailPage() {
             onClick={() => navigate("/admin/dashboard")}
             className="bg-green-600 text-white px-5 py-3 rounded-full font-semibold hover:bg-green-700 transition"
         >
-      ← 뒤로가기
-    </button>
+          ← 뒤로가기
+        </button>
         {user && <h1 className="text-2xl font-extrabold mr-20">{user.name} 님의 기록</h1>}
         <div />
       </div>
@@ -79,11 +103,14 @@ export default function AdminUserDetailPage() {
           selected={selectedDate}
           onSelect={handleDateSelect}
           className="!bg-white !p-4 rounded-xl shadow-lg"
+          modifiers={{ submitted: submittedDates }}
           modifiersClassNames={{
             selected: 'bg-green-600 text-white font-semibold',
-            today: 'border-2 border-green-500 text-green-800'
+            today: 'border-2 border-green-500 text-green-800',
+            submitted: 'text-orange-500 rounded-full w-5 h-5 ring-2 ring-indigo-300 text-center leading-tight'
           }}
         />
+
       </div>
 
       {/* 모달 */}

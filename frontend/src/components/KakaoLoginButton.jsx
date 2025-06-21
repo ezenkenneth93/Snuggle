@@ -1,5 +1,7 @@
 // src/components/KakaoLoginButton.jsx
 
+import kakaoLogo from "../assets/kakao_logo.png"; // ✅ 카카오 로고 이미지 경로
+
 // ✅ 카카오 앱 REST API 키 (카카오 개발자 콘솔에서 발급받은 키)
 const KAKAO_CLIENT_ID = "ed175771a7d271bb81cff7bf21400488";
 
@@ -26,9 +28,17 @@ const KakaoLoginButton = () => {
 
   // ✅ 버튼 UI
   return (
-    <button onClick={handleLogin}>
-      카카오로 로그인
-    </button>
+    <div className="flex flex-col items-center">
+      <button
+        onClick={handleLogin}
+        className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FEE500] shadow-md hover:brightness-95 transition"
+        title="카카오톡으로 로그인"
+      >
+        <img src={kakaoLogo} alt="Kakao Login" className="w-10 h-10" />
+      </button>
+      <p className="text-sm text-gray-600 mt-2">카카오톡으로 간편 로그인</p>
+    </div>
+
   );
 };
 

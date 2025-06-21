@@ -24,7 +24,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT COUNT(*) FROM user_info WHERE kakao_id = :kakaoId AND ROWNUM = 1", nativeQuery = true)
     int countByKakaoIdManual(@Param("kakaoId") String kakaoId);
 
-
-
 }
 

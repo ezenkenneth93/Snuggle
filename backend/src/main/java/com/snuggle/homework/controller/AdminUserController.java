@@ -44,6 +44,17 @@ public class AdminUserController {
         return ResponseEntity.ok(user);
     }
 
+    // 관리자 전용: 특정 유저의 숙제 제출 날짜 목록
+    @GetMapping("/{userId}/homework/dates")
+    public ResponseEntity<List<LocalDate>> getSubmittedDates(@PathVariable Long userId) {
+        User user = userService.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<LocalDate> submittedDates = homeworkService.getSubmittedDates(user.getUserId());
+        return ResponseEntity.ok(submittedDates);
+    }
+
+
     // 특정 날짜 숙제 조회
     @GetMapping("/{userId}/homeworks")
     public ResponseEntity<List<HomeworkResponse>> getHomeworks(

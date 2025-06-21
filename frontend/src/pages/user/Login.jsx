@@ -1,6 +1,7 @@
 import React, { useState }  from 'react';
 import { useNavigate } from "react-router-dom"; // ✅ 이 줄이 필요해요
 import KakaoLoginButton from '../../components/KakaoLoginButton'; // 경로는 프로젝트 구조에 맞게 조정
+import SnuggleLogo from "../../assets/snuggle_sheep.png";
 
 export default function Login({ setIsLoggedIn }) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -40,6 +41,7 @@ export default function Login({ setIsLoggedIn }) {
       <div className="min-h-screen bg-yellow-50 flex flex-col justify-center items-center px-4">
         <img
           src="/img/snuggle_sheep.png"
+          // src={SnuggleLogo}
           alt="Snuggly Mascot"
           className="w-48 h-auto mb-6 drop-shadow-lg"
         />
